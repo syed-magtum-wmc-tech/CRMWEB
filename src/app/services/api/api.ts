@@ -1,19 +1,19 @@
-import { Observable } from 'rxjs';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/mergeMap';
-import 'rxjs/add/observable/fromPromise';
+import { from } from 'rxjs';
+import { map, filter, catchError, mergeMap } from 'rxjs/operators';
 
-import { Http, Headers, ResponseContentType } from '@angular/http';
 import { Injectable } from '@angular/core';
 import { LoginModel } from '../../models/models';
 import { ApiConstantProvider } from '../api-constant/api-constant';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 // import { zip } from 'rxjs/observable/zip';
 
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class Api {
 
-  constructor(public http: Http,
+  constructor(public http: HttpClient,
     public apiConstant: ApiConstantProvider,
     ) { }
 
@@ -24,7 +24,7 @@ export class Api {
   getHeaders(user: LoginModel, isDispatch: boolean = false) {
 
     return user ? {
-      headers: new Headers({
+      headers: new HttpHeaders({
         'Content-Type': 'application/json',
         'X-AUTH': isDispatch ? `${user.dispatch_auth_token}` : `${user.auth_token}`,
         'X-ID': isDispatch ? `${user.dispatch_x_id}` : `${user.userId}`,
@@ -33,7 +33,7 @@ export class Api {
 
     } : {
         url: `${this.apiConstant.API_PREFIX_PATH}`,
-        headers: new Headers({
+        headers: new HttpHeaders({
           'Content-Type': 'application/json',
         })
       };
@@ -59,7 +59,7 @@ export class Api {
   dispatch_get(endpoint: string, params?: any) {
     return this.getUser()
       .map(user => this.getHeaders(user, true))
-      .map(options => { //console.log("header",options); 
+      .map(options => { //console.log("header",options);
         return this.setReqOpts(options, params)
       })
       .map(options => this.setEndPoint(options, endpoint))
@@ -69,7 +69,7 @@ export class Api {
   get(endpoint: string, params?: any) {
     return this.getUser()
       .map(user => this.getHeaders(user))
-      .map(options => { //console.log("header",options); 
+      .map(options => { //console.log("header",options);
         return this.setReqOpts(options, params)
       })
       .map(options => this.setEndPoint(options, endpoint))
@@ -79,7 +79,7 @@ export class Api {
   getWithConfig(endpoint: string, params?: any, configData?: any) {
     return this.getUser()
       .map(user => this.getHeaders(user))
-      .map(options => { //console.log("header",options); 
+      .map(options => { //console.log("header",options);
         return this.setReqOpts(options, params)
       })
       .map(options => this.setEndPoint(options, endpoint))
@@ -90,9 +90,7 @@ export class Api {
   */
 
   post(endpoint: string, body?: any, reqOpts?: any) {
-    return this.getUser()
-      .map(user => this.getHeaders(user))
-      .map(options => this.setEndPoint(options, endpoint))
+    return this.getUser().map(user => this.getHeaders(user)).map(options => this.setEndPoint(options, endpoint))
       .flatMap(options => this.http.post(options.url, body, options));
   }
 /*
