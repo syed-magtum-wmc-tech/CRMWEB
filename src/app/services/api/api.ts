@@ -1,4 +1,4 @@
-import { from } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { map, filter, catchError, mergeMap } from 'rxjs/operators';
 
 import { Injectable } from '@angular/core';
@@ -18,7 +18,7 @@ export class Api {
     ) { }
 
   getUser() {
-    return  JSON.parse(localStorage.getItem('user'));
+    return of(JSON.parse(localStorage.getItem('user')));
   }
 
   getHeaders(user: LoginModel, isDispatch: boolean = false) {
@@ -65,17 +65,15 @@ export class Api {
       .map(options => this.setEndPoint(options, endpoint))
       .flatMap(reqOpts => this.http.get(reqOpts.url, reqOpts));
   }
-
+  */
   get(endpoint: string, params?: any) {
     return this.getUser()
-      .map(user => this.getHeaders(user))
-      .map(options => { //console.log("header",options);
-        return this.setReqOpts(options, params)
-      })
-      .map(options => this.setEndPoint(options, endpoint))
-      .flatMap(reqOpts => this.http.get(reqOpts.url, reqOpts));
+    .pipe(map(user => this.getHeaders(user)),
+          map(options => this.setReqOpts(options, params)),
+          map(options => this.setEndPoint(options, endpoint)),
+          mergeMap(options => this.http.get(options.url, options)));
   }
-
+  /*
   getWithConfig(endpoint: string, params?: any, configData?: any) {
     return this.getUser()
       .map(user => this.getHeaders(user))
@@ -90,25 +88,27 @@ export class Api {
   */
 
   post(endpoint: string, body?: any, reqOpts?: any) {
-    return this.getUser().map(user => this.getHeaders(user)).map(options => this.setEndPoint(options, endpoint))
-      .flatMap(options => this.http.post(options.url, body, options));
+    return this.getUser()
+     .pipe(map(user => this.getHeaders(user)),
+           map(options => this.setEndPoint(options, endpoint)),
+           mergeMap(options => this.http.post(options.url, body, options)));
   }
-/*
+
   put(endpoint: string, body?: any, reqOpts?: any) {
     return this.getUser()
-      .map(user => this.getHeaders(user))
-      .map(options => this.setEndPoint(options, endpoint))
-      .flatMap(options => this.http.put(options.url, body, options));
+      .pipe(map(user => this.getHeaders(user)),
+            map(options => this.setEndPoint(options, endpoint)),
+            mergeMap(options => this.http.put(options.url, body, options)));
   }
 
   delete(endpoint: string, params?: any) {
     return this.getUser()
-      .map(user => this.getHeaders(user))
-      .map(options => { console.log(options); return this.setReqOpts(options, params) })
-      .map(options => this.setEndPoint(options, endpoint))
-      .flatMap(reqOpts => this.http.delete(reqOpts.url, reqOpts));
+          .pipe(map(user => this.getHeaders(user)),
+                map(options => this.setReqOpts(options, params)),
+                map(options => this.setEndPoint(options, endpoint)),
+                mergeMap(options => this.http.delete(options.url, options)));
   }
-
+/*
   formPost(endpoint: string, body?: any, reqOpts?: any) {
     console.log('body', body);
     return this.getUser()

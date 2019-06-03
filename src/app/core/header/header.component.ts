@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 
 import * as screenfull from 'screenfull';
+import { AuthenticationService } from '../../services/index';
 
 @Component({
   selector: 'app-header',
@@ -12,11 +13,18 @@ export class HeaderComponent {
   @Output()
   toggleNotificationSidenav = new EventEmitter<void>();
 
-  constructor() {}
+  constructor(private authenticationService: AuthenticationService) {
+
+  }
 
   fullScreenToggle(): void {
     if (screenfull.enabled) {
       screenfull.toggle();
     }
   }
+
+  signOut(): void {
+    this.authenticationService.logout();
+  }
+
 }

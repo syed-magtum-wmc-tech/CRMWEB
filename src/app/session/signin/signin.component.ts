@@ -6,7 +6,8 @@ import {
   Validators,
   FormControl
 } from '@angular/forms';
-import { AuthenticationService } from 'src/app/services/authentication/authentication.service';
+import { AuthenticationService } from '../../services/index';
+import { UserTranslator } from 'src/app/services/user/user.translator';
 
 @Component({
   selector: 'app-signin',
@@ -31,15 +32,23 @@ export class SigninComponent implements OnInit {
     this.authenticationService
       .login(loginModel)
       .subscribe(
-        // model => this.navigate( LoginModel(model)) ,
         resp => {
-          // this.handleLogin(resp.json() as LoginResponse),
-          console.log('response', resp.json());
-          this.router.navigate(['/quotes']);
+          this.handleLogin(resp);
         },
         err => {
           console.log('err', err);
-          // this.showToast('Invalid Username or Password')
         });
   }
+
+  handleLogin(resp: any, credentials?: any) {
+    const model = UserTranslator.toLoginModel(resp, true);
+    if (!model.auth_token || !model.userId) {
+      throw new Error('Invalid User Account');
+    } else {
+      localStorage.setItem('user', JSON.stringify(model));
+      this.router.navigate(['/quotes']);
+    }
+    return resp;
+  }
+
 }
