@@ -10,6 +10,7 @@ import { MatCardModule, MatIconModule, MatInputModule, MatRadioModule, MatButton
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AgGridModule } from 'ag-grid-angular';
 
 @NgModule({
   imports: [
@@ -25,6 +26,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     NgxDatatableModule,
     FormsModule,
     ReactiveFormsModule,
+    AgGridModule.withComponents([]),
   ],
   declarations: [ListComponent, EditComponent, DetailComponent, CreateComponent]
 })
