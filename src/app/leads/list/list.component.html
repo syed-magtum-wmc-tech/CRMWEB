@@ -1,3 +1,30 @@
 <p>
   list works!
 </p>
+
+<div style="height: 100%; display: flex; flex-direction: column;">
+
+  <div style="flex-grow: 1; height: 495px;">
+    <ag-grid-angular #agGrid style="width: 100%; height: 100%;" id="myGrid" class="ag-theme-balham" 
+      [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef" 
+      [floatingFilter]="true" 
+      [debug]="true"
+      [rowSelection]="rowSelection"
+      [rowDeselection]="true"
+      [paginationPageSize]="paginationPageSize"
+      [cacheOverflowSize]="cacheOverflowSize"
+      [maxConcurrentDatasourceRequests]="maxConcurrentDatasourceRequests"
+      [infiniteInitialRowCount]="infiniteInitialRowCount"
+      [maxBlocksInCache]="maxBlocksInCache"
+      [pagination]="true"
+      [paginationAutoPageSize]="true"
+      [isRowMaster]="isRowMaster"
+      [masterDetail]="true"
+      [detailCellRendererParams]="detailCellRendererParams"
+      [isFullWidthCell]="isFullWidthCell"
+      [rowData]="rowData" 
+      (gridReady)="onGridReady($event)"
+      ></ag-grid-angular>
+  </div>
+</div>
